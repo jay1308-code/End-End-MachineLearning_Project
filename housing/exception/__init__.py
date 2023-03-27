@@ -22,9 +22,14 @@ class HousingException(Exception):
             str: error_message
         """
         _,_,exec_tb = error_details.exc_info()
-        line_number = exec_tb.tb_frame.f_lineno
+        line_number = exec_tb.tb_lineno
         file_name = exec_tb.tb_frame.f_code.co_filename
-        error_message = f"Error occured in script: [{file_name}] at line number :[{line_number}] error_message :[{error_msg}]"
+        error_message = f"""
+        Error occurred in script:
+        [{file_name}] at 
+        line number :[{line_number}] 
+        error_message :[{error_msg}]
+        """
         return error_message
 
     def __str__(self) -> str:
