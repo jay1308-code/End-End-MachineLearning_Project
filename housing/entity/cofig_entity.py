@@ -18,7 +18,7 @@ DataIngestionConfig = namedtuple("DataIngestionConfig",
 # DataValidationConfig:
 # 1 : Schema file path (who contain the all info related how many numbers of columns,file formate etc)                                                
 
-DataValidationConfig = namedtuple("DataValidationConfig",["schema_file_path"])
+DataValidationConfig = namedtuple("DataValidationConfig",["schema_file_path","report_page_file_path","report_file_path"])
 
 # DataTransformationConfig:
 # 1: Adding some bedrooms in the data 

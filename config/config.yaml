@@ -15,6 +15,9 @@ data_ingestion_config:
 
 data_validation_config:
   schema_file_path: schema.yaml
+  schema_dir: config
+  report_page_file_name : report.html
+  report_file_path_name : report.json
   
 
 data_transformation_config:

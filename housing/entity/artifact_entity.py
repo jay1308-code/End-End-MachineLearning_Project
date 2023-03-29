@@ -6,3 +6,10 @@ DataIngestionArtifacts = namedtuple("DataIngestionArtifacts",
                                     "is_ingested",
                                     "message"]
                                                 )
+                                                
+DataValidationArtifacts = namedtuple("DataValidationArtifacts",["schema_file_path",
+                                        "report_file_path",
+                                        "report_page_file_path",
+                                        "is_validated",
+                                        "message"]
+                                                    )                                                
