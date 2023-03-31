@@ -12,4 +12,11 @@ DataValidationArtifacts = namedtuple("DataValidationArtifacts",["schema_file_pat
                                         "report_page_file_path",
                                         "is_validated",
                                         "message"]
-                                                    )                                                
+                                                    ) 
+
+DataTransformationArtifacts = namedtuple("DataTransformationArtifacts",["message",
+                                            "is_transformed",
+                                            "transformed_train_file_path",
+                                            "transformed_test_file_path",
+                                            "preprocessed_object_file_path"]
+                                            )

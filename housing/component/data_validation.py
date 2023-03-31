@@ -10,13 +10,16 @@ from evidently.model_profile.sections import DataDriftProfileSection
 from evidently.model_profile import Profile
 from evidently.dashboard import Dashboard
 from evidently.dashboard.tabs import DataDriftTab
+from housing.util.util import read_yaml_file
+from housing.constant import *
 class DataValidation:
     
     def __init__(self,data_validation_config:DataValidationConfig,
                   data_ingestion_artifact:DataIngestionArtifacts  ) -> None:
-
+        logging.info(f"{'='*20} Data Validation log started {'='*20}")
         self.data_validation_config = data_validation_config
         self.data_ingestion_artifact_config = data_ingestion_artifact
+        self.schema_info = read_yaml_file(file_path=SCHEMA_FILE_PATH)
         
     def is_train_test_file_exist(self)->bool:
         try:
@@ -46,9 +49,36 @@ class DataValidation:
 
     def validate_dataset_schema(self)->bool:
         try:
+            logging.info(f"Updating in Numbers of columns in train test dataset is started")
             Validation_status =False
             #Assigment validation training and testing dataset using schema file
+
+            # geting train test data 
+            train_df,test_df = self.get_train_and_test_df()
+
+            # geting schema columns
+            schema_columns = self.schema_info[SCHEMA_COLUMN_KEY]
+
             # number of column
+            col_train=[]
+            for i in range(len(train_df.columns)):
+                if train_df.columns[i] in (schema_columns):
+                    col_train.append(train_df.columns[i])
+            
+                  
+
+            col_test=[]
+            for i in range(len(train_df.columns)):
+                if train_df.columns[i] in (schema_columns):
+                    col_test.append(train_df.columns[i])
+            
+            # updating the train and test dataset
+            train_updated = train_df[col_train]
+            test_updated = test_df[col_test]
+
+            logging.info(f"numbers of columns before updating train:[{len(train_df.columns)}], test:[{len(test_df.columns)}]  After updating numbers of columns in train:[{len(train_updated.columns)},test:[{len(test_updated.columns)}]")
+            logging.info(f"no of columns are updated")
+            
             # check the value of ocean proximity
             # check column names
             # acceptable values
@@ -117,6 +147,7 @@ class DataValidation:
 
     def initiate_data_validation(self)->DataValidationArtifacts:
         try:
+            
             self.is_train_test_file_exist()
             self.validate_dataset_schema()  
             self.is_data_drift_found() 
@@ -128,6 +159,8 @@ class DataValidation:
             message="Data VAlidation performed successfully")
 
             logging.info(f"DataVAlidation Artifacts :{[data_validation]}")
+            logging.info(f"{'='*20} Data Validation log Completed {'='*20}\n\n")
+            return data_validation
 
         except Exception as e:
             raise HousingException(e,sys)

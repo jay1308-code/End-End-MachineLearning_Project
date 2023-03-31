@@ -2,10 +2,11 @@ from housing.config.configuration import Configuration
 from housing.logger import logging
 from housing.exception import HousingException
 import os,sys
-from housing.entity.artifact_entity import DataIngestionArtifacts,DataValidationArtifacts
+from housing.entity.artifact_entity import DataIngestionArtifacts,DataValidationArtifacts,DataTransformationArtifacts
 from housing.entity.cofig_entity import DataIngestionConfig
 from housing.component.data_ingestion import DataIngestion
 from housing.component.data_validation import DataValidation
+from housing.component.data_transformation import DataTransformation
 
 class Pipeline:
 
@@ -32,8 +33,18 @@ class Pipeline:
         except Exception as e:
             raise HousingException(e,sys)  
 
-    def start_data_transformation(self):
-        pass
+    def start_data_transformation(self,data_ingestion_artifacts:DataIngestionArtifacts,data_validation_artifacts:DataValidationArtifacts)->DataTransformationArtifacts:
+        try:
+            data_transformation = DataTransformation(data_ingestion_artifact=data_ingestion_artifacts,
+                                                        data_validation_artifact=data_validation_artifacts,
+                                                        data_transformation_config=self.config.get_data_transformation_config())
+
+            return data_transformation.initiate_data_transformation()
+
+        except Exception as e:
+            raise HousingException(e,sys)
+
+        
     def start_model_trainer(self):
         pass
     def start_model_evaluation(self):
@@ -46,8 +57,10 @@ class Pipeline:
             # data ingestion
             data_ingestion = self.start_data_ingestion()
             # data validation
-            data_validation = self.start_data_validation(data_ingestion_artifact=data_ingestion)   
-
+            data_validation = self.start_data_validation(data_ingestion_artifact=data_ingestion) 
+            # data transformation
+            data_transformation = self.start_data_transformation(data_ingestion_artifacts=data_ingestion,
+                                                                data_validation_artifacts=data_validation)  
         except Exception as e:
             raise HousingException(e,sys)         
 
